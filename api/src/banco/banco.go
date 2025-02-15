@@ -2,11 +2,12 @@ package banco
 
 import  (
         "database/sql"
-        "github.com/go-sql-driver/mysql"
+        _ "github.com/go-sql-driver/mysql" // Driver
+        "api/src/config"
         )
         
 func Conectar() (*sql.DB, error) {
-  db, erro := sq.Open("mysql", config.StringConexaoBanco)
+  db, erro := sql.Open("mysql", config.StringConexaoBanco)
   if erro != nil {
     return nil, erro
   }
