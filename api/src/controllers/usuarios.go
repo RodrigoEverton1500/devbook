@@ -1,19 +1,34 @@
 package controllers
 
 import	(
+	"strings"
         "api/src/repositorios"
         "api/src/respostas"
         "api/src/banco"
         "api/src/modelos"
 	"net/http"
 	"io/ioutil"
-	"log"
-	"fmt"
 	"encoding/json"
 	)
 	
 func GetUsuarios(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("buscando usuarios"))
+  nomeOuNick := strings.ToLower(r.URL.Query().Get("usuario"))
+  
+  db, erro := banco.Conectar()
+  if erro != nil {
+    respostas.Erro(w, http.StatusInternalServerError, erro)
+    return
+  }
+  defer db.Close()
+  
+  repositorio := repositorios.NovoRepositorioUsuarios(db)
+  usuarios, erro := repositorio.Buscar(nomeOuNick)
+  if erro != nil {
+    respostas.Erro(w, http.StatusInternalServerError, erro)
+    return
+  }
+  
+  respostas.JSON(w, http.StatusOK, usuarios)
 }
 
 func GetUsuario(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +60,7 @@ func PostUsuario(w http.ResponseWriter, r *http.Request) {
   }
   
   repositorio := repositorios.NovoRepositorioUsuarios(db)
-  usuario.ID, erro := repositorio.Criar(usuario)
+  usuario.ID, erro = repositorio.Criar(usuario)
   if erro != nil {
     respostas.Erro(w, http.StatusInternalServerError, erro)
     return

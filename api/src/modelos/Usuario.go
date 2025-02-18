@@ -3,6 +3,7 @@ package modelos
 import  (
 	"errors"
         "time"
+        "strings"
         )
 
 type Usuario struct {
@@ -14,8 +15,8 @@ type Usuario struct {
   CriadoEm time.Time    `json:"criadoEm,omitempty"`
 }
 
-func (usuario *Usuario) Preparar() erro error {
-  if erro = usuario.validar(); erro != nil {
+func (usuario *Usuario) Preparar() error {
+  if erro := usuario.validar(); erro != nil {
     return erro
   }
   
